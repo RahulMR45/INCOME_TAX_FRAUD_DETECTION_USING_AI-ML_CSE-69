@@ -7,7 +7,7 @@ from models.decision_tree import predict_decision_tree
 from models.svm import predict_svm
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  
 
 @app.route('/predict', methods=['POST'])
 def predict():
