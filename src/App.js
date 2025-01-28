@@ -5,7 +5,7 @@ const WelcomeScreen = ({ onEnter }) => {
   return (
     <div className="welcome-container">
       <div className="welcome-content">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUW3JaGNz-dHba3TiXA2cVTZJtA39l95ELcA&s" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUW3JaGNz-dHba3TiXA2cVTZJtA39l95ELcA&s" alt="income_tax" />
         <h1 className="welcome-title">Welcome Tax Officer</h1>
         <h2 className="welcome-subtitle">Income Tax Fraud Detection System</h2>
         <p className="welcome-text">
@@ -113,7 +113,7 @@ const FraudDetectionForm = () => {
     <div className="form-container">
       <h1>Income Tax Fraud Detection</h1>
       <form onSubmit={handleSubmit}>
-        <center><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUW3JaGNz-dHba3TiXA2cVTZJtA39l95ELcA&s" /></center>
+        <center><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUW3JaGNz-dHba3TiXA2cVTZJtA39l95ELcA&s" alt="income_tax" /></center>
 
         <input
           type="text"
@@ -178,7 +178,7 @@ const FraudDetectionForm = () => {
         />
 
         <button type="submit" disabled={isLoading}>
-          {isLoading ? "Loading..." : "Check for Fraud"}
+          {isLoading ? "Checking..." : "Check for Fraud"}
         </button>
 
         {result && (
