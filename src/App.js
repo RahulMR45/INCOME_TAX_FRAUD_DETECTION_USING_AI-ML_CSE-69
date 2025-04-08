@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import './App.css';
+import EnhancedResultPage from './ResultPage';
+import LoginPage from './LoginPage';
 
 const WelcomeScreen = ({ onEnter }) => {
   return (
@@ -48,7 +50,7 @@ const ModelSelector = ({ selectedModel, onModelSelect }) => {
   );
 };
 
-const FraudDetectionForm = () => {
+const FraudDetectionForm = ({ onResultComplete }) => {
   const [formData, setFormData] = useState({
     incomeDeclared: '',
     businessRevenue: '',
@@ -62,7 +64,6 @@ const FraudDetectionForm = () => {
     modelType: ''
   });
 
-  const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -85,29 +86,25 @@ const FraudDetectionForm = () => {
       });
 
       const data = await response.json();
+      
       if (data.error) {
-        setResult({ message: `Error: ${data.error}`, isError: true });
+        onResultComplete({ 
+          message: `Error: ${data.error}`, 
+          isError: true 
+        }, formData.modelType);
       } else {
-        setResult({
-          message: data.Fraud_Detected ? "FRAUD DETECTED!" : "NO FRAUD DETECTED",
-          isFraud: data.Fraud_Detected
-        });
+        // Pass the complete response data directly
+        onResultComplete(data, formData.modelType);
       }
     } catch (error) {
-      setResult({ message: "Error connecting to server", isError: true });
+      onResultComplete({ 
+        message: "Error connecting to server", 
+        isError: true 
+      }, formData.modelType);
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (result) {
-      const timer = setTimeout(() => {
-        setResult(null);
-      }, 10000); // 10 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [result]);
 
   return (
     <div className="form-container">
@@ -180,26 +177,40 @@ const FraudDetectionForm = () => {
         <button type="submit" disabled={isLoading}>
           {isLoading ? "Checking..." : "Check for Fraud"}
         </button>
-
-        {result && (
-          <h1 className={`result-message ${result.isFraud ? 'fraud' : result.isError ? 'error' : 'no-fraud'}`}>
-            {result.message}
-          </h1>
-        )}
       </form>
     </div>
   );
 };
 
 const App = () => {
-  const [showForm, setShowForm] = useState(false);
+  const [screen, setScreen] = useState("login");
+  const [result, setResult] = useState(null);
+  const [selectedModel, setSelectedModel] = useState("");
+
+  const handleResultComplete = (resultData, model) => {
+    setResult(resultData);
+    setSelectedModel(model);
+    setScreen("result");
+  };
 
   return (
     <div className="app">
-      {!showForm ? (
-        <WelcomeScreen onEnter={() => setShowForm(true)} />
-      ) : (
-        <FraudDetectionForm />
+      {screen === "login" && (
+        <LoginPage onLogin={() => setScreen("welcome")} />
+      )}
+      {screen === "welcome" && (
+        <WelcomeScreen onEnter={() => setScreen("detection")} />
+      )}
+      {screen === "detection" && (
+        <FraudDetectionForm onResultComplete={handleResultComplete} />
+      )}
+      {screen === "result" && (
+        <EnhancedResultPage 
+          result={result}
+          selectedModel={selectedModel}
+          onRetry={() => setScreen("detection")}
+          onHome={() => setScreen("welcome")}
+        />
       )}
     </div>
   );
